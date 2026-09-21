@@ -63,13 +63,18 @@
       height: 100%;
     }
 
-    /* ── PANEL ── */
+    /* ── CONTROL PANEL ── */
     #panel {
       background: var(--bg2);
       border-bottom: 1px solid var(--border);
       padding: 10px 14px;
       flex-shrink: 0;
       z-index: 10;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    #panel.hidden {
+      display: none;
     }
 
     .panel-row {
@@ -102,8 +107,8 @@
       padding: 9px 10px;
       outline: none;
       -webkit-appearance: none;
+      appearance: none;
       min-height: 44px;
-      /* iOS tap target */
     }
 
     select:focus,
@@ -130,13 +135,11 @@
       font-weight: 500;
       padding: 10px 14px;
       min-height: 44px;
-      /* iOS tap target */
       transition: background 0.15s, opacity 0.15s;
       user-select: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
@@ -157,7 +160,6 @@
       color: var(--text);
     }
 
-    /* font controls */
     .font-controls {
       display: flex;
       align-items: center;
@@ -199,48 +201,12 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px 56px;
-      /* side padding for nav arrows */
+      padding: 20px 20px 80px;
+      /* bottom pad for floating nav bar */
       position: relative;
       overflow: hidden;
       background: var(--bg);
       min-height: 0;
-    }
-
-    /* Floating prev/next arrows */
-    .slide-nav-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(22, 27, 34, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.4);
-      width: 40px;
-      height: 80px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      z-index: 5;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-      transition: all 0.2s;
-    }
-
-    .slide-nav-btn:active {
-      background: rgba(200, 169, 110, 0.25);
-      color: var(--accent);
-    }
-
-    .slide-nav-btn.prev {
-      left: 6px;
-    }
-
-    .slide-nav-btn.next {
-      right: 6px;
     }
 
     /* Verse display */
@@ -329,23 +295,73 @@
       line-height: 1.6;
     }
 
-    /* Show controls button (when panel hidden) */
-    #toggle-panel {
+    /* ── FLOATING BOTTOM NAV BAR (presentation mode) ── */
+    /* Shown when controls are hidden */
+    #float-nav {
       position: absolute;
-      top: 12px;
-      right: 14px;
-      background: rgba(22, 27, 34, 0.85);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-dim);
-      font-size: 13px;
-      padding: 7px 14px;
-      min-height: 40px;
-      cursor: pointer;
-      z-index: 20;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
       display: none;
-      backdrop-filter: blur(6px);
+      /* shown when panel hidden */
+      align-items: center;
+      gap: 0;
+      background: rgba(22, 27, 34, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50px;
+      padding: 6px 8px;
+      backdrop-filter: blur(12px);
+      z-index: 20;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .fnav-btn {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 22px;
+      width: 48px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 40px;
       -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .fnav-btn:active {
+      background: rgba(200, 169, 110, 0.2);
+      color: var(--accent);
+    }
+
+    #fnav-ref {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--text-dim);
+      padding: 0 10px;
+      white-space: nowrap;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .fnav-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.08);
+      flex-shrink: 0;
+    }
+
+    /* Controls toggle button in float nav */
+    #fnav-controls {
+      font-size: 14px;
+      color: var(--accent);
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      margin-left: 4px;
+      padding-left: 4px;
+      border-radius: 0 40px 40px 0;
     }
 
     /* Offline badge */
@@ -377,7 +393,6 @@
     }
 
     #install-banner button {
-      margin-left: auto;
       background: var(--accent);
       color: #0d1117;
       border: none;
@@ -395,8 +410,11 @@
       background: transparent;
       color: var(--text-dim);
       border: 1px solid var(--border);
-      min-height: 36px;
-      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    #install-banner .install-go {
+      margin-left: 0;
     }
 
     /* History pills */
@@ -457,6 +475,23 @@
         display: none;
       }
     }
+
+    /* Tap hint — fades out after first use */
+    #tap-hint {
+      position: absolute;
+      bottom: 90px;
+      font-size: 12px;
+      color: var(--text-dim);
+      opacity: 0;
+      pointer-events: none;
+      text-align: center;
+      transition: opacity 0.5s;
+      letter-spacing: 0.03em;
+    }
+
+    #tap-hint.show {
+      opacity: 0.5;
+    }
   </style>
 </head>
 
@@ -469,15 +504,17 @@
       <select id="book-select"></select>
       <button class="btn btn-secondary" id="fullscreen-btn" title="Fullscreen (F)"
         style="padding:9px 12px;font-size:16px;min-width:44px;">⛶</button>
+      <button class="btn btn-secondary" id="hide-controls-btn" title="Hide controls (C)"
+        style="padding:9px 12px;font-size:15px;min-width:44px;">✕</button>
     </div>
     <div class="panel-row">
       <span class="panel-label">Ch / Vs</span>
       <input type="number" id="chapter-input" min="1" value="1" placeholder="Ch">
       <span style="color:var(--text-dim);">/</span>
       <input type="number" id="verse-input" min="1" value="1" placeholder="Vs">
-      <button class="btn btn-secondary" id="prev-btn" style="padding:9px 12px;">‹</button>
+      <button class="btn btn-secondary" id="prev-btn" style="padding:9px 12px;font-size:18px;min-width:44px;">‹</button>
       <button class="btn btn-primary" id="fetch-btn">Show</button>
-      <button class="btn btn-secondary" id="next-btn" style="padding:9px 12px;">›</button>
+      <button class="btn btn-secondary" id="next-btn" style="padding:9px 12px;font-size:18px;min-width:44px;">›</button>
     </div>
     <div class="panel-row" style="justify-content:space-between;">
       <div>
@@ -497,11 +534,7 @@
 
   <!-- SLIDE -->
   <div id="slide">
-    <button id="toggle-panel">☰ Controls</button>
     <div id="offline-badge">● Offline</div>
-
-    <button class="slide-nav-btn prev" id="slide-prev">‹</button>
-    <button class="slide-nav-btn next" id="slide-next">›</button>
 
     <div id="placeholder">
       <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
@@ -509,7 +542,7 @@
         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
       </svg>
       <p>పుస్తకం, అధ్యాయం &amp; వచనం ఎంచుకోండి<br>
-        <span style="color:var(--text-dim);font-size:13px;">(Select book, chapter &amp; verse then tap Show)</span>
+        <span style="color:var(--text-dim);font-size:13px;">(Select book, chapter &amp; verse — then tap Show)</span>
       </p>
     </div>
     <div id="loading">
@@ -519,23 +552,32 @@
     <div id="error-msg"></div>
     <div id="verse-reference"></div>
     <div id="verse-text"></div>
+
+    <div id="tap-hint">Tap to show controls • Swipe to navigate</div>
     <div id="keyboard-hint">← → Navigate &bull; F Fullscreen &bull; C Controls</div>
+
+    <!-- Floating nav bar (presentation mode) -->
+    <div id="float-nav">
+      <button class="fnav-btn" id="fnav-prev" title="Previous verse">‹</button>
+      <span id="fnav-ref">—</span>
+      <button class="fnav-btn" id="fnav-next" title="Next verse">›</button>
+      <button class="fnav-btn" id="fnav-controls" title="Show controls">☰</button>
+    </div>
   </div>
 
   <!-- INSTALL BANNER -->
   <div id="install-banner">
-    <span>📖 Add to Home Screen for fullscreen &amp; offline use</span>
+    <span>📖 Install for fullscreen &amp; offline</span>
     <button class="dismiss" id="install-dismiss">✕</button>
-    <button id="install-btn">Install App</button>
+    <button class="install-go" id="install-btn">Install</button>
   </div>
 
   <script>
-    // Register service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(() => { });
     }
 
-    // Offline detection
+    // Offline
     function updateOnlineStatus() {
       document.getElementById('offline-badge').style.display = navigator.onLine ? 'none' : 'block';
     }
@@ -543,35 +585,26 @@
     window.addEventListener('offline', updateOnlineStatus);
     updateOnlineStatus();
 
-    // PWA Install prompt
+    // PWA install
     let deferredPrompt = null;
     const installBanner = document.getElementById('install-banner');
-    const installBtn = document.getElementById('install-btn');
-    const installDismiss = document.getElementById('install-dismiss');
-
     window.addEventListener('beforeinstallprompt', e => {
       e.preventDefault();
       deferredPrompt = e;
-      // Only show if not already installed and not dismissed this session
-      if (!sessionStorage.getItem('install-dismissed')) {
-        installBanner.style.display = 'flex';
-      }
+      if (!sessionStorage.getItem('install-dismissed')) installBanner.style.display = 'flex';
     });
-
-    installBtn.addEventListener('click', async () => {
+    document.getElementById('install-btn').addEventListener('click', async () => {
       if (!deferredPrompt) return;
       deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
+      await deferredPrompt.userChoice;
       deferredPrompt = null;
       installBanner.style.display = 'none';
     });
-
-    installDismiss.addEventListener('click', () => {
+    document.getElementById('install-dismiss').addEventListener('click', () => {
       installBanner.style.display = 'none';
       sessionStorage.setItem('install-dismissed', '1');
     });
 
-    // Book data
     const BOOKS = [
       { id: "GEN", name: "ఆదికాండము", eng: "Genesis" },
       { id: "EXO", name: "నిర్గమకాండము", eng: "Exodus" },
@@ -645,6 +678,7 @@
     let fontSize = parseInt(localStorage.getItem('te-bible-font')) || 36;
     let history = [];
     let panelVisible = true;
+    let tapHintShown = false;
 
     // DOM refs
     const bookSelect = document.getElementById('book-select');
@@ -653,9 +687,8 @@
     const fetchBtn = document.getElementById('fetch-btn');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
-    const slidePrevBtn = document.getElementById('slide-prev');
-    const slideNextBtn = document.getElementById('slide-next');
     const fullscreenBtn = document.getElementById('fullscreen-btn');
+    const hideCtrlBtn = document.getElementById('hide-controls-btn');
     const verseRef = document.getElementById('verse-reference');
     const verseText = document.getElementById('verse-text');
     const placeholder = document.getElementById('placeholder');
@@ -663,10 +696,12 @@
     const errorEl = document.getElementById('error-msg');
     const fontLabel = document.getElementById('font-size-label');
     const historyEl = document.getElementById('history');
-    const togglePanel = document.getElementById('toggle-panel');
     const panel = document.getElementById('panel');
+    const floatNav = document.getElementById('float-nav');
+    const fnавRef = document.getElementById('fnav-ref');
+    const tapHint = document.getElementById('tap-hint');
 
-    // Populate book dropdown
+    // Populate books
     BOOKS.forEach((b, i) => {
       const opt = document.createElement('option');
       opt.value = i;
@@ -696,27 +731,42 @@
     }
     fullscreenBtn.addEventListener('click', toggleFullscreen);
 
-    // Panel toggle
+    // Panel visibility
     function setPanelVisibility(v) {
       panelVisible = v;
-      panel.style.display = panelVisible ? '' : 'none';
-      togglePanel.style.display = panelVisible ? 'none' : 'block';
+      panel.classList.toggle('hidden', !v);
+      floatNav.style.display = v ? 'none' : 'flex';
+
+      // Show tap hint once when controls first hidden
+      if (!v && !tapHintShown) {
+        tapHintShown = true;
+        tapHint.classList.add('show');
+        setTimeout(() => tapHint.classList.remove('show'), 3000);
+      }
     }
 
-    // Double-tap slide to toggle panel
-    let tapCount = 0, tapTimer = null;
+    // ✕ button in panel hides controls
+    hideCtrlBtn.addEventListener('click', () => setPanelVisibility(false));
+    // ☰ button in float nav shows controls
+    document.getElementById('fnav-controls').addEventListener('click', () => setPanelVisibility(true));
+    // Tap anywhere on slide toggles controls
     document.getElementById('slide').addEventListener('click', e => {
-      if (e.target.closest('button')) return;
-      tapCount++;
-      if (tapCount === 2) {
-        clearTimeout(tapTimer);
-        tapCount = 0;
-        setPanelVisibility(!panelVisible);
-        return;
-      }
-      tapTimer = setTimeout(() => { tapCount = 0; }, 350);
+      if (e.target.closest('#float-nav')) return;
+      setPanelVisibility(!panelVisible);
     });
-    togglePanel.addEventListener('click', () => setPanelVisibility(true));
+
+    // Float nav prev/next
+    document.getElementById('fnav-prev').addEventListener('click', e => { e.stopPropagation(); changeVerse(-1); });
+    document.getElementById('fnav-next').addEventListener('click', e => { e.stopPropagation(); changeVerse(1); });
+
+    // Update float nav reference label
+    function updateFloatRef() {
+      const bookIdx = parseInt(bookSelect.value);
+      const book = BOOKS[bookIdx];
+      const ch = parseInt(chapterInput.value) || 1;
+      const vs = parseInt(verseInput.value) || 1;
+      document.getElementById('fnav-ref').textContent = `${book.name} ${ch}:${vs}`;
+    }
 
     // History
     function addHistory(label, bookIdx, ch, vs) {
@@ -738,7 +788,7 @@
       });
     }
 
-    // State management
+    // State
     function showState(state) {
       placeholder.style.display = 'none';
       loadingEl.style.display = 'none';
@@ -754,25 +804,20 @@
       });
     }
 
-    // Load book data with cache
+    // Load book data
     async function loadBookData(fileName) {
       if (bookCache.has(fileName)) return bookCache.get(fileName);
       const primary = `https://raw.githubusercontent.com/aruljohn/Bible-telugu/main/${encodeURIComponent(fileName)}.json`;
       const fallback = `https://cdn.jsdelivr.net/gh/aruljohn/Bible-telugu@main/${encodeURIComponent(fileName)}.json`;
       let resp;
-      try {
-        resp = await fetch(primary);
-        if (!resp.ok) throw new Error();
-      } catch {
-        resp = await fetch(fallback);
-      }
-      if (!resp || !resp.ok) throw new Error(`Failed to load ${fileName}`);
+      try { resp = await fetch(primary); if (!resp.ok) throw new Error(); } catch { resp = await fetch(fallback); }
+      if (!resp?.ok) throw new Error(`Failed to load ${fileName}`);
       const data = await resp.json();
       bookCache.set(fileName, data);
       return data;
     }
 
-    // Fetch and display verse
+    // Fetch verse
     async function fetchVerse() {
       const bookIdx = parseInt(bookSelect.value);
       const book = BOOKS[bookIdx];
@@ -783,24 +828,20 @@
       fetchBtn.disabled = true;
 
       try {
-        const fileName = book.file || book.eng;
-        const data = await loadBookData(fileName);
+        const data = await loadBookData(book.file || book.eng);
         chapterInput.max = data.chapters.length;
-
         const chapterObj = data.chapters.find(c => String(c.chapter) === String(ch));
         if (!chapterObj) throw new Error(`అధ్యాయం ${ch} లేదు. (మొత్తం: ${data.chapters.length})`);
-
         verseInput.max = chapterObj.verses.length;
         const verseObj = chapterObj.verses.find(v => String(v.verse) === String(vs));
         if (!verseObj?.text) throw new Error(`వచనం ${vs} లేదు. (మొత్తం: ${chapterObj.verses.length})`);
 
-        const teluguName = data.book?.telugu || book.name;
-        verseRef.textContent = `${teluguName} ${ch}:${vs}`;
+        verseRef.textContent = `${data.book?.telugu || book.name} ${ch}:${vs}`;
         verseText.textContent = verseObj.text.trim();
         verseText.style.fontSize = fontSize + 'px';
         showState('verse');
         addHistory(`${book.name} ${ch}:${vs}`, bookIdx, ch, vs);
-
+        updateFloatRef();
       } catch (err) {
         errorEl.textContent = err.message || 'వచనం కనుగొనబడలేదు. మళ్ళీ ప్రయత్నించండి.';
         showState('error');
@@ -809,19 +850,17 @@
       }
     }
 
-    // Navigate verses (crosses chapters/books)
+    // Navigate
     async function changeVerse(delta) {
       let bookIdx = parseInt(bookSelect.value);
       let ch = parseInt(chapterInput.value) || 1;
       let vs = parseInt(verseInput.value) || 1;
       const book = BOOKS[bookIdx];
-
       try {
         const data = await loadBookData(book.file || book.eng);
         const chapterObj = data.chapters.find(c => String(c.chapter) === String(ch));
         const totalVerses = chapterObj?.verses.length || 1;
         const totalChapters = data.chapters.length;
-
         if (delta > 0) {
           if (vs < totalVerses) { vs++; }
           else if (ch < totalChapters) { ch++; vs = 1; }
@@ -841,7 +880,6 @@
             vs = prevData.chapters[ch - 1]?.verses.length || 1;
           } else return;
         }
-
         bookSelect.value = bookIdx;
         chapterInput.value = ch;
         verseInput.value = vs;
@@ -853,8 +891,6 @@
     fetchBtn.addEventListener('click', fetchVerse);
     prevBtn.addEventListener('click', () => changeVerse(-1));
     nextBtn.addEventListener('click', () => changeVerse(1));
-    slidePrevBtn.addEventListener('click', () => changeVerse(-1));
-    slideNextBtn.addEventListener('click', () => changeVerse(1));
 
     bookSelect.addEventListener('change', async () => {
       chapterInput.value = 1; verseInput.value = 1;
@@ -880,7 +916,7 @@
       el.addEventListener('keydown', e => { if (e.key === 'Enter') fetchVerse(); });
     });
 
-    // Keyboard shortcuts (desktop)
+    // Keyboard shortcuts
     window.addEventListener('keydown', e => {
       const tag = document.activeElement?.tagName;
       const inInput = tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA';
@@ -892,12 +928,12 @@
         e.preventDefault(); toggleFullscreen();
       } else if (!inInput && (e.key === 'c' || e.key === 'C')) {
         e.preventDefault(); setPanelVisibility(!panelVisible);
-      } else if (e.key === 'Escape' && !panelVisible) {
+      } else if (e.key === 'Escape') {
         setPanelVisibility(true);
       }
     });
 
-    // Touch swipe gestures
+    // Swipe gestures
     let tx = 0, ty = 0;
     const slideEl = document.getElementById('slide');
     slideEl.addEventListener('touchstart', e => {
@@ -907,7 +943,8 @@
     slideEl.addEventListener('touchend', e => {
       const dx = e.changedTouches[0].screenX - tx;
       const dy = e.changedTouches[0].screenY - ty;
-      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      // Only swipe if moved enough and more horizontal than vertical
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.8) {
         dx < 0 ? changeVerse(1) : changeVerse(-1);
       }
     }, { passive: true });
