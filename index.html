@@ -4,7 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="బైబిలు">
   <title>Telugu Bible Slideshow</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link
     href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
     rel="stylesheet">
@@ -30,31 +37,38 @@
       --ref-text: #c8a96e;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
     }
 
     html,
     body {
       height: 100%;
+      width: 100%;
       background: var(--bg);
       color: var(--text);
       font-family: 'Inter', sans-serif;
       overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     body {
       padding-top: var(--safe-top);
       padding-bottom: var(--safe-bottom);
+      padding-left: var(--safe-left);
+      padding-right: var(--safe-right);
       display: flex;
       flex-direction: column;
       height: 100%;
     }
 
+    /* ── PANEL ── */
     #panel {
       background: var(--bg2);
       border-bottom: 1px solid var(--border);
-      padding: 12px 16px;
+      padding: 10px 14px;
       flex-shrink: 0;
-      transition: transform 0.25s ease, opacity 0.25s ease;
       z-index: 10;
     }
 
@@ -74,20 +88,22 @@
       color: var(--text-dim);
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      min-width: 44px;
+      min-width: 40px;
     }
 
     select,
     input[type="number"] {
       background: var(--bg3);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       color: var(--text);
       font-family: 'Inter', sans-serif;
-      font-size: 14px;
-      padding: 7px 10px;
+      font-size: 15px;
+      padding: 9px 10px;
       outline: none;
       -webkit-appearance: none;
+      min-height: 44px;
+      /* iOS tap target */
     }
 
     select:focus,
@@ -101,24 +117,28 @@
 
     #chapter-input,
     #verse-input {
-      width: 62px;
+      width: 60px;
       text-align: center;
     }
 
     .btn {
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 500;
-      padding: 8px 14px;
-      transition: background 0.15s, opacity 0.15s, border-color 0.15s;
+      padding: 10px 14px;
+      min-height: 44px;
+      /* iOS tap target */
+      transition: background 0.15s, opacity 0.15s;
       user-select: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 4px;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     .btn:active {
@@ -131,26 +151,13 @@
       font-weight: 600;
     }
 
-    .btn-primary:hover {
-      background: var(--accent-hover);
-    }
-
     .btn-secondary {
       background: var(--bg3);
       border: 1px solid var(--border);
       color: var(--text);
     }
 
-    .btn-secondary:hover {
-      border-color: rgba(255, 255, 255, 0.25);
-    }
-
-    .nav-btn {
-      padding: 7px 12px;
-      font-size: 13px;
-      font-weight: 500;
-    }
-
+    /* font controls */
     .font-controls {
       display: flex;
       align-items: center;
@@ -160,16 +167,18 @@
     .font-btn {
       background: var(--bg3);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       color: var(--text);
-      font-size: 16px;
-      width: 34px;
-      height: 34px;
+      font-size: 18px;
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .font-btn:active {
@@ -179,99 +188,73 @@
     #font-size-label {
       font-size: 12px;
       color: var(--text-dim);
-      min-width: 32px;
+      min-width: 30px;
       text-align: center;
     }
 
+    /* ── SLIDE AREA ── */
     #slide {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 32px 50px;
+      padding: 24px 56px;
+      /* side padding for nav arrows */
       position: relative;
       overflow: hidden;
       background: var(--bg);
       min-height: 0;
-      user-select: text;
     }
 
-    /* Floating slide navigation buttons */
+    /* Floating prev/next arrows */
     .slide-nav-btn {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(22, 27, 34, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: var(--text-dim);
-      width: 44px;
-      height: 72px;
+      background: rgba(22, 27, 34, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.4);
+      width: 40px;
+      height: 80px;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 26px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      user-select: none;
       backdrop-filter: blur(8px);
-      z-index: 10;
-      opacity: 0.25;
-    }
-
-    .slide-nav-btn:hover {
-      opacity: 1;
-      background: rgba(28, 34, 48, 0.9);
-      color: var(--accent);
-      border-color: var(--accent);
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+      z-index: 5;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      transition: all 0.2s;
     }
 
     .slide-nav-btn:active {
-      transform: translateY(-50%) scale(0.95);
+      background: rgba(200, 169, 110, 0.25);
+      color: var(--accent);
     }
 
     .slide-nav-btn.prev {
-      left: 16px;
+      left: 6px;
     }
 
     .slide-nav-btn.next {
-      right: 16px;
+      right: 6px;
     }
 
-    @media (max-width: 600px) {
-      #slide {
-        padding: 20px 24px;
-      }
-
-      .slide-nav-btn {
-        width: 36px;
-        height: 52px;
-        font-size: 22px;
-        opacity: 0.5;
-      }
-
-      .slide-nav-btn.prev {
-        left: 8px;
-      }
-
-      .slide-nav-btn.next {
-        right: 8px;
-      }
-    }
-
+    /* Verse display */
     #verse-reference {
       font-family: 'Inter', sans-serif;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 500;
       color: var(--ref-text);
       letter-spacing: 0.06em;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       text-align: center;
       opacity: 0;
-      transition: opacity 0.35s ease, transform 0.35s ease;
-      transform: translateY(6px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: translateY(8px);
     }
 
     #verse-text {
@@ -281,11 +264,11 @@
       color: var(--verse-text);
       line-height: 1.6;
       text-align: center;
-      max-width: 950px;
+      max-width: 100%;
       word-break: break-word;
       opacity: 0;
-      transition: opacity 0.35s ease 0.05s, transform 0.35s ease 0.05s;
-      transform: translateY(6px);
+      transition: opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s;
+      transform: translateY(8px);
     }
 
     #verse-reference.show,
@@ -294,11 +277,12 @@
       transform: translateY(0);
     }
 
+    /* States */
     #placeholder {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       color: var(--text-dim);
       text-align: center;
     }
@@ -308,8 +292,8 @@
     }
 
     #placeholder p {
-      font-size: 14px;
-      line-height: 1.5;
+      font-size: 15px;
+      line-height: 1.6;
     }
 
     #loading {
@@ -321,8 +305,8 @@
     }
 
     .spinner {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border: 3px solid var(--border);
       border-top-color: var(--accent);
       border-radius: 50%;
@@ -341,48 +325,85 @@
       font-size: 14px;
       text-align: center;
       padding: 0 20px;
-      max-width: 500px;
-      line-height: 1.5;
+      max-width: 420px;
+      line-height: 1.6;
     }
 
+    /* Show controls button (when panel hidden) */
     #toggle-panel {
       position: absolute;
       top: 12px;
       right: 14px;
-      background: rgba(22, 27, 34, 0.8);
+      background: rgba(22, 27, 34, 0.85);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       color: var(--text-dim);
-      font-size: 12px;
-      padding: 5px 12px;
+      font-size: 13px;
+      padding: 7px 14px;
+      min-height: 40px;
       cursor: pointer;
       z-index: 20;
       display: none;
       backdrop-filter: blur(6px);
-      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    #toggle-panel:hover {
-      color: var(--accent);
-      border-color: var(--accent);
-    }
-
-    #keyboard-hint {
+    /* Offline badge */
+    #offline-badge {
+      display: none;
       position: absolute;
-      bottom: 10px;
+      top: 12px;
+      left: 14px;
+      background: rgba(249, 117, 131, 0.15);
+      border: 1px solid rgba(249, 117, 131, 0.35);
+      color: #f97583;
       font-size: 11px;
-      color: var(--text-dim);
-      opacity: 0.35;
-      pointer-events: none;
-      letter-spacing: 0.04em;
-      text-align: center;
+      border-radius: 6px;
+      padding: 4px 10px;
+      z-index: 20;
     }
 
+    /* Install prompt banner */
+    #install-banner {
+      display: none;
+      background: rgba(200, 169, 110, 0.12);
+      border-top: 1px solid rgba(200, 169, 110, 0.25);
+      padding: 10px 16px;
+      flex-shrink: 0;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    #install-banner button {
+      margin-left: auto;
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      min-height: 36px;
+    }
+
+    #install-banner .dismiss {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      min-height: 36px;
+      flex-shrink: 0;
+    }
+
+    /* History pills */
     #history {
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      padding: 0 4px;
       scrollbar-width: none;
     }
 
@@ -396,14 +417,16 @@
       border-radius: 20px;
       color: var(--text-dim);
       font-size: 12px;
-      padding: 3px 10px;
+      padding: 5px 12px;
       white-space: nowrap;
       cursor: pointer;
       flex-shrink: 0;
-      transition: border-color 0.15s, color 0.15s;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .hist-pill:hover,
     .hist-pill:active {
       border-color: var(--accent);
       color: var(--accent);
@@ -416,67 +439,139 @@
       letter-spacing: 0.08em;
       margin-bottom: 4px;
     }
+
+    /* Desktop keyboard hint */
+    #keyboard-hint {
+      position: absolute;
+      bottom: 10px;
+      font-size: 11px;
+      color: var(--text-dim);
+      opacity: 0.3;
+      pointer-events: none;
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      #keyboard-hint {
+        display: none;
+      }
+    }
   </style>
 </head>
 
 <body>
 
+  <!-- CONTROL PANEL -->
   <div id="panel">
     <div class="panel-row">
       <span class="panel-label">Book</span>
       <select id="book-select"></select>
-      <button class="btn btn-secondary" id="fullscreen-btn" title="Toggle Fullscreen (F)"
-        style="padding: 7px 11px; font-size: 15px;">⛶</button>
+      <button class="btn btn-secondary" id="fullscreen-btn" title="Fullscreen (F)"
+        style="padding:9px 12px;font-size:16px;min-width:44px;">⛶</button>
     </div>
     <div class="panel-row">
       <span class="panel-label">Ch / Vs</span>
       <input type="number" id="chapter-input" min="1" value="1" placeholder="Ch">
-      <span style="color:var(--text-dim);font-size:14px">/</span>
+      <span style="color:var(--text-dim);">/</span>
       <input type="number" id="verse-input" min="1" value="1" placeholder="Vs">
-      <button class="btn btn-secondary nav-btn" id="prev-btn" title="Previous Verse (← / PageUp)">‹ Prev</button>
+      <button class="btn btn-secondary" id="prev-btn" style="padding:9px 12px;">‹</button>
       <button class="btn btn-primary" id="fetch-btn">Show</button>
-      <button class="btn btn-secondary nav-btn" id="next-btn" title="Next Verse (→ / PageDown / Space)">Next ›</button>
+      <button class="btn btn-secondary" id="next-btn" style="padding:9px 12px;">›</button>
     </div>
-    <div class="panel-row" style="justify-content:space-between">
+    <div class="panel-row" style="justify-content:space-between;">
       <div>
-        <div class="section-label">Font size</div>
+        <div class="section-label">Font</div>
         <div class="font-controls">
-          <div class="font-btn" id="font-dec" title="Decrease Font Size">−</div>
+          <div class="font-btn" id="font-dec">−</div>
           <span id="font-size-label">36</span>
-          <div class="font-btn" id="font-inc" title="Increase Font Size">+</div>
+          <div class="font-btn" id="font-inc">+</div>
         </div>
       </div>
-      <div style="flex:1; margin-left:12px; min-width: 0;" id="history-wrap">
+      <div style="flex:1;margin-left:12px;min-width:0;">
         <div class="section-label">Recent</div>
         <div id="history"></div>
       </div>
     </div>
   </div>
 
+  <!-- SLIDE -->
   <div id="slide">
-    <button id="toggle-panel">☰ Show Controls</button>
-    <button class="slide-nav-btn prev" id="slide-prev" title="Previous Verse (←)">‹</button>
-    <button class="slide-nav-btn next" id="slide-next" title="Next Verse (→)">›</button>
+    <button id="toggle-panel">☰ Controls</button>
+    <div id="offline-badge">● Offline</div>
+
+    <button class="slide-nav-btn prev" id="slide-prev">‹</button>
+    <button class="slide-nav-btn next" id="slide-next">›</button>
 
     <div id="placeholder">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
       </svg>
-      <p>Select a book, chapter &amp; verse<br>then tap <strong style="color:#c8a96e">Show</strong> or use <strong
-          style="color:#c8a96e">‹ / ›</strong></p>
+      <p>పుస్తకం, అధ్యాయం &amp; వచనం ఎంచుకోండి<br>
+        <span style="color:var(--text-dim);font-size:13px;">(Select book, chapter &amp; verse then tap Show)</span>
+      </p>
     </div>
     <div id="loading">
       <div class="spinner"></div>
-      <span style="font-size:13px">వచనం లోడ్ అవుతోంది…</span>
+      <span style="font-size:13px;">వచనం లోడ్ అవుతోంది…</span>
     </div>
     <div id="error-msg"></div>
     <div id="verse-reference"></div>
     <div id="verse-text"></div>
-    <div id="keyboard-hint">Shortcuts: ← / → Next &amp; Prev &bull; F Fullscreen &bull; C Controls</div>
+    <div id="keyboard-hint">← → Navigate &bull; F Fullscreen &bull; C Controls</div>
+  </div>
+
+  <!-- INSTALL BANNER -->
+  <div id="install-banner">
+    <span>📖 Add to Home Screen for fullscreen &amp; offline use</span>
+    <button class="dismiss" id="install-dismiss">✕</button>
+    <button id="install-btn">Install App</button>
   </div>
 
   <script>
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => { });
+    }
+
+    // Offline detection
+    function updateOnlineStatus() {
+      document.getElementById('offline-badge').style.display = navigator.onLine ? 'none' : 'block';
+    }
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
+
+    // PWA Install prompt
+    let deferredPrompt = null;
+    const installBanner = document.getElementById('install-banner');
+    const installBtn = document.getElementById('install-btn');
+    const installDismiss = document.getElementById('install-dismiss');
+
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      // Only show if not already installed and not dismissed this session
+      if (!sessionStorage.getItem('install-dismissed')) {
+        installBanner.style.display = 'flex';
+      }
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBanner.style.display = 'none';
+    });
+
+    installDismiss.addEventListener('click', () => {
+      installBanner.style.display = 'none';
+      sessionStorage.setItem('install-dismissed', '1');
+    });
+
+    // Book data
     const BOOKS = [
       { id: "GEN", name: "ఆదికాండము", eng: "Genesis" },
       { id: "EXO", name: "నిర్గమకాండము", eng: "Exodus" },
@@ -546,13 +641,12 @@
       { id: "REV", name: "ప్రకటన", eng: "Revelation" },
     ];
 
-    // In-memory cache for loaded books to provide instantaneous navigation
     const bookCache = new Map();
-
     let fontSize = parseInt(localStorage.getItem('te-bible-font')) || 36;
     let history = [];
     let panelVisible = true;
 
+    // DOM refs
     const bookSelect = document.getElementById('book-select');
     const chapterInput = document.getElementById('chapter-input');
     const verseInput = document.getElementById('verse-input');
@@ -572,7 +666,7 @@
     const togglePanel = document.getElementById('toggle-panel');
     const panel = document.getElementById('panel');
 
-    // Populate books dropdown
+    // Populate book dropdown
     BOOKS.forEach((b, i) => {
       const opt = document.createElement('option');
       opt.value = i;
@@ -581,7 +675,7 @@
     });
     bookSelect.value = BOOKS.findIndex(b => b.id === 'MAT');
 
-    // Font size controls
+    // Font size
     function updateFontSize(n) {
       fontSize = Math.min(84, Math.max(18, n));
       fontLabel.textContent = fontSize;
@@ -592,26 +686,25 @@
     document.getElementById('font-dec').addEventListener('click', () => updateFontSize(fontSize - 2));
     document.getElementById('font-inc').addEventListener('click', () => updateFontSize(fontSize + 2));
 
-    // Fullscreen toggle
+    // Fullscreen
     function toggleFullscreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => { });
-      } else if (document.exitFullscreen) {
+      } else {
         document.exitFullscreen().catch(() => { });
       }
     }
     fullscreenBtn.addEventListener('click', toggleFullscreen);
 
-    // Panel visibility toggle
-    function setPanelVisibility(visible) {
-      panelVisible = visible;
+    // Panel toggle
+    function setPanelVisibility(v) {
+      panelVisible = v;
       panel.style.display = panelVisible ? '' : 'none';
       togglePanel.style.display = panelVisible ? 'none' : 'block';
     }
 
-    // Double-tap or click on slide background to toggle panel
-    let tapCount = 0;
-    let tapTimer = null;
+    // Double-tap slide to toggle panel
+    let tapCount = 0, tapTimer = null;
     document.getElementById('slide').addEventListener('click', e => {
       if (e.target.closest('button')) return;
       tapCount++;
@@ -623,10 +716,9 @@
       }
       tapTimer = setTimeout(() => { tapCount = 0; }, 350);
     });
-
     togglePanel.addEventListener('click', () => setPanelVisibility(true));
 
-    // History management
+    // History
     function addHistory(label, bookIdx, ch, vs) {
       history = history.filter(h => h.label !== label);
       history.unshift({ label, bookIdx, ch, vs });
@@ -646,52 +738,41 @@
       });
     }
 
-    // State display management
+    // State management
     function showState(state) {
       placeholder.style.display = 'none';
       loadingEl.style.display = 'none';
       errorEl.style.display = 'none';
       verseRef.classList.remove('show');
       verseText.classList.remove('show');
-
       if (state === 'placeholder') placeholder.style.display = 'flex';
       if (state === 'loading') loadingEl.style.display = 'flex';
       if (state === 'error') errorEl.style.display = 'block';
-      if (state === 'verse') {
-        requestAnimationFrame(() => {
-          verseRef.classList.add('show');
-          verseText.classList.add('show');
-        });
-      }
+      if (state === 'verse') requestAnimationFrame(() => {
+        verseRef.classList.add('show');
+        verseText.classList.add('show');
+      });
     }
 
-    // Load book data from open-source repository with CDN mirror fallback
+    // Load book data with cache
     async function loadBookData(fileName) {
-      if (bookCache.has(fileName)) {
-        return bookCache.get(fileName);
-      }
-
-      const primaryUrl = `https://raw.githubusercontent.com/aruljohn/Bible-telugu/main/${encodeURIComponent(fileName)}.json`;
-      const fallbackUrl = `https://cdn.jsdelivr.net/gh/aruljohn/Bible-telugu@main/${encodeURIComponent(fileName)}.json`;
-
-      let response;
+      if (bookCache.has(fileName)) return bookCache.get(fileName);
+      const primary = `https://raw.githubusercontent.com/aruljohn/Bible-telugu/main/${encodeURIComponent(fileName)}.json`;
+      const fallback = `https://cdn.jsdelivr.net/gh/aruljohn/Bible-telugu@main/${encodeURIComponent(fileName)}.json`;
+      let resp;
       try {
-        response = await fetch(primaryUrl);
-        if (!response.ok) throw new Error('Primary failed');
+        resp = await fetch(primary);
+        if (!resp.ok) throw new Error();
       } catch {
-        response = await fetch(fallbackUrl);
+        resp = await fetch(fallback);
       }
-
-      if (!response || !response.ok) {
-        throw new Error(`Failed to load ${fileName}`);
-      }
-
-      const data = await response.json();
+      if (!resp || !resp.ok) throw new Error(`Failed to load ${fileName}`);
+      const data = await resp.json();
       bookCache.set(fileName, data);
       return data;
     }
 
-    // Fetch and display specific verse
+    // Fetch and display verse
     async function fetchVerse() {
       const bookIdx = parseInt(bookSelect.value);
       const book = BOOKS[bookIdx];
@@ -704,183 +785,133 @@
       try {
         const fileName = book.file || book.eng;
         const data = await loadBookData(fileName);
-
         chapterInput.max = data.chapters.length;
 
         const chapterObj = data.chapters.find(c => String(c.chapter) === String(ch));
-        if (!chapterObj) {
-          throw new Error(`అధ్యాయం ${ch} అందుబాటులో లేదు. (మొత్తం అధ్యాయాలు: ${data.chapters.length})`);
-        }
+        if (!chapterObj) throw new Error(`అధ్యాయం ${ch} లేదు. (మొత్తం: ${data.chapters.length})`);
 
         verseInput.max = chapterObj.verses.length;
-
         const verseObj = chapterObj.verses.find(v => String(v.verse) === String(vs));
-        if (!verseObj || !verseObj.text) {
-          throw new Error(`వచనం ${vs} అందుబాటులో లేదు. (మొత్తం వచనాలు: ${chapterObj.verses.length})`);
-        }
+        if (!verseObj?.text) throw new Error(`వచనం ${vs} లేదు. (మొత్తం: ${chapterObj.verses.length})`);
 
-        const teluguBookName = data.book?.telugu || book.name;
-        const refLabel = `${teluguBookName} (${book.eng}) ${ch}:${vs}`;
-
-        verseRef.textContent = refLabel;
+        const teluguName = data.book?.telugu || book.name;
+        verseRef.textContent = `${teluguName} ${ch}:${vs}`;
         verseText.textContent = verseObj.text.trim();
         verseText.style.fontSize = fontSize + 'px';
         showState('verse');
-
         addHistory(`${book.name} ${ch}:${vs}`, bookIdx, ch, vs);
 
       } catch (err) {
-        errorEl.textContent = err.message || 'వచనం కనుగొనబడలేదు. దయచేసి తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి.';
+        errorEl.textContent = err.message || 'వచనం కనుగొనబడలేదు. మళ్ళీ ప్రయత్నించండి.';
         showState('error');
       } finally {
         fetchBtn.disabled = false;
       }
     }
 
-    // Slide navigation (Next / Previous verse) across chapters and books
+    // Navigate verses (crosses chapters/books)
     async function changeVerse(delta) {
       let bookIdx = parseInt(bookSelect.value);
       let ch = parseInt(chapterInput.value) || 1;
       let vs = parseInt(verseInput.value) || 1;
       const book = BOOKS[bookIdx];
-      const fileName = book.file || book.eng;
 
       try {
-        const data = await loadBookData(fileName);
+        const data = await loadBookData(book.file || book.eng);
         const chapterObj = data.chapters.find(c => String(c.chapter) === String(ch));
-        const totalVerses = chapterObj ? chapterObj.verses.length : 1;
+        const totalVerses = chapterObj?.verses.length || 1;
         const totalChapters = data.chapters.length;
 
         if (delta > 0) {
-          // Advance to next verse
-          if (vs < totalVerses) {
-            vs++;
-          } else if (ch < totalChapters) {
-            ch++;
-            vs = 1;
-          } else if (bookIdx < BOOKS.length - 1) {
-            bookIdx++;
-            ch = 1;
-            vs = 1;
-          } else {
-            return; // Reached end of Revelation
-          }
-        } else if (delta < 0) {
-          // Step back to previous verse
-          if (vs > 1) {
-            vs--;
-          } else if (ch > 1) {
+          if (vs < totalVerses) { vs++; }
+          else if (ch < totalChapters) { ch++; vs = 1; }
+          else if (bookIdx < BOOKS.length - 1) { bookIdx++; ch = 1; vs = 1; }
+          else return;
+        } else {
+          if (vs > 1) { vs--; }
+          else if (ch > 1) {
             ch--;
             const prevChap = data.chapters.find(c => String(c.chapter) === String(ch));
-            vs = prevChap ? prevChap.verses.length : 1;
+            vs = prevChap?.verses.length || 1;
           } else if (bookIdx > 0) {
             bookIdx--;
             const prevBook = BOOKS[bookIdx];
             const prevData = await loadBookData(prevBook.file || prevBook.eng);
             ch = prevData.chapters.length;
-            const lastChap = prevData.chapters[ch - 1];
-            vs = lastChap ? lastChap.verses.length : 1;
-          } else {
-            return; // Reached beginning of Genesis
-          }
+            vs = prevData.chapters[ch - 1]?.verses.length || 1;
+          } else return;
         }
 
         bookSelect.value = bookIdx;
         chapterInput.value = ch;
         verseInput.value = vs;
         await fetchVerse();
-      } catch (err) {
-        console.error(err);
-      }
+      } catch (err) { console.error(err); }
     }
 
-    // Event Listeners
+    // Event listeners
     fetchBtn.addEventListener('click', fetchVerse);
     prevBtn.addEventListener('click', () => changeVerse(-1));
     nextBtn.addEventListener('click', () => changeVerse(1));
     slidePrevBtn.addEventListener('click', () => changeVerse(-1));
     slideNextBtn.addEventListener('click', () => changeVerse(1));
 
-    // Update chapter / verse bounds when book changes
     bookSelect.addEventListener('change', async () => {
-      chapterInput.value = 1;
-      verseInput.value = 1;
+      chapterInput.value = 1; verseInput.value = 1;
       const book = BOOKS[parseInt(bookSelect.value)];
       try {
         const data = await loadBookData(book.file || book.eng);
         chapterInput.max = data.chapters.length;
-        if (data.chapters[0]) {
-          verseInput.max = data.chapters[0].verses.length;
-        }
+        verseInput.max = data.chapters[0]?.verses.length || 1;
       } catch { }
     });
 
-    // Update verse bounds when chapter changes
     chapterInput.addEventListener('change', async () => {
       const book = BOOKS[parseInt(bookSelect.value)];
       const ch = parseInt(chapterInput.value) || 1;
       try {
         const data = await loadBookData(book.file || book.eng);
         const chapterObj = data.chapters.find(c => String(c.chapter) === String(ch));
-        if (chapterObj) {
-          verseInput.max = chapterObj.verses.length;
-        }
+        if (chapterObj) verseInput.max = chapterObj.verses.length;
       } catch { }
     });
 
     [chapterInput, verseInput].forEach(el => {
-      el.addEventListener('keydown', e => {
-        if (e.key === 'Enter') fetchVerse();
-      });
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') fetchVerse(); });
     });
 
-    // Keyboard presentation controls
+    // Keyboard shortcuts (desktop)
     window.addEventListener('keydown', e => {
-      const activeTag = document.activeElement ? document.activeElement.tagName : '';
-      const isInputFocused = activeTag === 'INPUT' || activeTag === 'SELECT' || activeTag === 'TEXTAREA';
-
-      if (e.key === 'ArrowRight' || e.key === 'PageDown' || (!isInputFocused && e.code === 'Space')) {
-        e.preventDefault();
-        changeVerse(1);
+      const tag = document.activeElement?.tagName;
+      const inInput = tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA';
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || (!inInput && e.code === 'Space')) {
+        e.preventDefault(); changeVerse(1);
       } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-        e.preventDefault();
-        changeVerse(-1);
-      } else if (!isInputFocused && (e.key === 'f' || e.key === 'F')) {
-        e.preventDefault();
-        toggleFullscreen();
-      } else if (!isInputFocused && (e.key === 'c' || e.key === 'C')) {
-        e.preventDefault();
-        setPanelVisibility(!panelVisible);
+        e.preventDefault(); changeVerse(-1);
+      } else if (!inInput && (e.key === 'f' || e.key === 'F')) {
+        e.preventDefault(); toggleFullscreen();
+      } else if (!inInput && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault(); setPanelVisibility(!panelVisible);
       } else if (e.key === 'Escape' && !panelVisible) {
         setPanelVisibility(true);
       }
     });
 
-    // Mobile touch swipe gestures on slide
-    let touchStartX = 0;
-    let touchStartY = 0;
-    document.getElementById('slide').addEventListener('touchstart', e => {
-      touchStartX = e.changedTouches[0].screenX;
-      touchStartY = e.changedTouches[0].screenY;
+    // Touch swipe gestures
+    let tx = 0, ty = 0;
+    const slideEl = document.getElementById('slide');
+    slideEl.addEventListener('touchstart', e => {
+      tx = e.changedTouches[0].screenX;
+      ty = e.changedTouches[0].screenY;
     }, { passive: true });
-
-    document.getElementById('slide').addEventListener('touchend', e => {
-      const touchEndX = e.changedTouches[0].screenX;
-      const touchEndY = e.changedTouches[0].screenY;
-      const diffX = touchEndX - touchStartX;
-      const diffY = touchEndY - touchStartY;
-
-      // Detect horizontal swipe if delta X > 50px and predominantly horizontal
-      if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
-        if (diffX < 0) {
-          changeVerse(1); // Swipe left -> Next verse
-        } else {
-          changeVerse(-1); // Swipe right -> Previous verse
-        }
+    slideEl.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].screenX - tx;
+      const dy = e.changedTouches[0].screenY - ty;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        dx < 0 ? changeVerse(1) : changeVerse(-1);
       }
     }, { passive: true });
 
-    // Initial state
     showState('placeholder');
   </script>
 </body>
