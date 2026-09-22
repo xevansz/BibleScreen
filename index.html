@@ -474,6 +474,99 @@
       #keyboard-hint {
         display: none;
       }
+
+      #panel {
+          padding: 8px 10px;
+          width: 100%;
+          max-width: 100%;
+          overflow: hidden;
+      }
+
+      .panel-row {
+          width: 100%;
+          min-width: 0;
+          gap: 6px;
+      }
+
+      /* book row */
+      .panel-book-row {
+          display: grid;
+          grid-template-columns: 40px minmax(0, 1fr) 44px 44px;
+          align-items: center;
+      }
+
+      .panel-book-row .panel-label {
+          min-width: 0;
+      }
+
+      #book-select {
+          width: 100%;
+          min-width: 0;
+          max-width: 100%;
+        }
+
+        #fullscreen-btn,
+        #hide-controls-btn {
+          width: 44px;
+          min-width: 44px !important;
+          padding: 8px !important;
+          font-size: 15px !important;
+        }
+
+        /* ── CHAPTER / VERSE ROW ── */
+        .panel-nav-row {
+          display: grid;
+          grid-template-columns: 40px 54px 12px 54px minmax(0, 1fr);
+          align-items: center;
+        }
+
+        .panel-nav-row .panel-label {
+          min-width: 0;
+          white-space: nowrap;
+        }
+
+        #chapter-input,
+        #verse-input {
+          width: 54px;
+          min-width: 54px;
+          padding: 9px 6px;
+        }
+
+        #fetch-btn {
+          width: 100%;
+          min-width: 0;
+          padding: 10px 10px;
+        }
+
+        /* Previous / Next stay out of the control panel on mobile */
+        #prev-btn,
+        #next-btn {
+          display: none;
+        }
+
+        /* Floating navigation becomes the mobile navigation */
+        #float-nav {
+          display: flex !important;
+          bottom: 12px;
+          max-width: calc(100% - 24px);
+        }
+
+        .fnav-btn {
+          width: 44px;
+          min-width: 44px;
+        }
+
+        #fnav-ref {
+          min-width: 70px;
+          padding: 0 6px;
+          font-size: 11px;
+        }
+
+        /* Keep Recent from forcing the panel wider */
+        #history {
+          min-width: 0;
+          max-width: 100%;
+        }
     }
 
     /* Tap hint — fades out after first use */
@@ -499,7 +592,7 @@
 
   <!-- CONTROL PANEL -->
   <div id="panel">
-    <div class="panel-row">
+    <div class="panel-row panel-book-row">
       <span class="panel-label">Book</span>
       <select id="book-select"></select>
       <button class="btn btn-secondary" id="fullscreen-btn" title="Fullscreen (F)"
@@ -507,7 +600,7 @@
       <button class="btn btn-secondary" id="hide-controls-btn" title="Hide controls (C)"
         style="padding:9px 12px;font-size:15px;min-width:44px;">✕</button>
     </div>
-    <div class="panel-row">
+    <div class="panel-row panel-nav-row">
       <span class="panel-label">Ch / Vs</span>
       <input type="number" id="chapter-input" min="1" value="1" placeholder="Ch">
       <span style="color:var(--text-dim);">/</span>
@@ -748,7 +841,7 @@
     // ✕ button in panel hides controls
     hideCtrlBtn.addEventListener('click', () => setPanelVisibility(false));
     // ☰ button in float nav shows controls
-    document.getElementById('fnav-controls').addEventListener('click', () => setPanelVisibility(true));
+    document.getElementById('fnav-controls').addEventListener('click', () => setPanelVisibility(!panelVisible));
     // Tap anywhere on slide toggles controls
     document.getElementById('slide').addEventListener('click', e => {
       if (e.target.closest('#float-nav')) return;
