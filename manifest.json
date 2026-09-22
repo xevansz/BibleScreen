@@ -4,7 +4,7 @@
   "description": "Telugu Bible verse presentation app for prayer sessions",
   "start_url": "./index.html",
   "display": "fullscreen",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#0d1117",
   "theme_color": "#0d1117",
   "icons": [
