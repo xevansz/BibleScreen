@@ -1,10 +1,10 @@
-const CACHE = 'telugu-bible-v2';
+const CACHE = 'telugu-bible-v3';
 const STATIC = [
   './',
   './index.html',
   './manifest.json',
   './icon.svg',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Ramabhadra&display=swap',
+  'https://fonts.googleapis.com/css2?family=Gurajada&family=Inter:wght@400;500;600&family=Mandali&family=Noto+Sans+Telugu:wght@400;600&family=Peddana&family=Ramabhadra&family=Suranna&display=swap',
 ];
 
 self.addEventListener('install', e => {
