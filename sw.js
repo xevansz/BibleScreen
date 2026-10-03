@@ -1,8 +1,10 @@
-const CACHE = 'telugu-bible-v1';
+const CACHE = 'telugu-bible-v2';
 const STATIC = [
   './',
   './index.html',
-  'https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap',
+  './manifest.json',
+  './icon.svg',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Ramabhadra&display=swap',
 ];
 
 self.addEventListener('install', e => {
@@ -20,11 +22,12 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Cache-first for Bible JSON data (GitHub/jsDelivr), network-first for everything else
+  // Cache-first for Bible JSON data and fonts, network-first for everything else
   const url = e.request.url;
-  const isBibleData = url.includes('aruljohn') || url.includes('jsdelivr');
+  const isBibleData = url.includes('xevansz') || url.includes('aruljohn') || url.includes('jsdelivr') || url.includes('Bible-telugu');
+  const isFont = url.includes('fonts.gstatic.com') || url.includes('fonts.googleapis.com');
 
-  if (isBibleData) {
+  if (isBibleData || isFont) {
     e.respondWith(
       caches.open(CACHE).then(async cache => {
         const cached = await cache.match(e.request);
